@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>🎬 AI Movie Recommendation System</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+
+            background:
+            linear-gradient(
+                rgba(0,0,0,0.8),
+                rgba(0,0,0,0.9)
+            ),
+
+            url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba");
+
+            background-size:cover;
+            background-position:center;
+
+            min-height:100vh;
+            color:white;
+        }
+
+        .navbar{
+
+            width:100%;
+            padding:20px 50px;
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            background:rgba(0,0,0,0.7);
+
+            backdrop-filter:blur(10px);
+        }
+
+        .logo{
+
+            font-size:32px;
+            font-weight:700;
+            color:#ff2e63;
+        }
+
+        .hero{
+
+            text-align:center;
+            margin-top:60px;
+        }
+
+        .hero h1{
+
+            font-size:55px;
+            margin-bottom:20px;
+        }
+
+        .hero p{
+
+            color:#ccc;
+            margin-bottom:30px;
+            font-size:18px;
+        }
+
+        .search-box{
+
+            display:flex;
+            justify-content:center;
+            gap:10px;
+        }
+
+        input{
+
+            width:400px;
+            padding:15px;
+
+            border:none;
+            border-radius:10px;
+
+            font-size:16px;
+        }
+
+        button{
+
+            padding:15px 25px;
+
+            border:none;
+            border-radius:10px;
+
+            background:#ff2e63;
+            color:white;
+
+            font-size:16px;
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        button:hover{
+
+            background:#ff004c;
+            transform:scale(1.05);
+        }
+
+        .movies-container{
+
+            width:90%;
+            margin:auto;
+
+            margin-top:60px;
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+
+            gap:30px;
+        }
+
+        .movie-card{
+
+            background:rgba(255,255,255,0.08);
+
+            border-radius:15px;
+
+            overflow:hidden;
+
+            backdrop-filter:blur(10px);
+
+            transition:0.3s;
+
+            box-shadow:0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .movie-card:hover{
+
+            transform:translateY(-10px);
+        }
+
+        .movie-card img{
+
+            width:100%;
+            height:330px;
+            object-fit:cover;
+        }
+
+        .movie-info{
+
+            padding:15px;
+            text-align:center;
+        }
+
+        .movie-info h3{
+
+            font-size:18px;
+            margin-bottom:10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <div class="logo">
+            🎬 CineAI
+        </div>
+
+    </div>
+
+    <div class="hero">
+
+        <h1>
+            AI Movie Recommendation System
+        </h1>
+
+        <p>
+            Discover movies you’ll love 🍿
+        </p>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="movie"
+                placeholder="Enter movie name..."
+            >
+
+            <button onclick="getRecommendations()">
+                Recommend
+            </button>
+
+        </div>
+
+    </div>
+
+    <div
+        class="movies-container"
+        id="result"
+    ></div>
+
+<script>
+
+async function getRecommendations(){
+
+    let movie = document.getElementById(
+        "movie"
+    ).value;
+
+    let res = await fetch(
+        "/recommend",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                movie:movie
+            })
+        }
+    );
+
+    let data = await res.json();
+
+    let html = "";
+
+    // Error handling
+    if(data.error){
+
+        html = `
+        <h2 style="text-align:center;">
+            ${data.error}
+        </h2>
+        `;
+    }
+
+    else{
+
+        data.forEach(movie => {
+
+            html += `
+
+            <div class="movie-card">
+
+                <img src="${movie.poster}">
+
+                <div class="movie-info">
+
+                    <h3>
+                        ${movie.title}
+                    </h3>
+
+                </div>
+
+            </div>
+
+            `;
+        });
+    }
+
+    document.getElementById(
+        "result"
+    ).innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
